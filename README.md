@@ -161,7 +161,7 @@ function App() {
 Feel free to contribute! Fork the repo, make changes, and submit a PR. 🚀
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](/LICENSE) file for details.
 
 MIT License © 2025 m.rabeeh.vk.
 
