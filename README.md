@@ -20,36 +20,65 @@ Import and use different loop components in your React project:
 
 ### 1️⃣ SmartLoop (New Feature!)
 ```jsx
+import React from "react";
 import { SmartLoop } from "react-loop-components";
 
-function App() {
-  const items = ["Apple", "Banana", "Cherry"];
-  return (
-    <SmartLoop array={items} component={(item) => <p>{item}</p>} method="map" />
-  );
-}
+const items = ["Apple", "Banana", "Cherry", "Grapes"];
+
+const App = () => (
+  <SmartLoop
+    data={items}
+    renderItem={(item) => <p key={item}>{item}</p>}
+    height={200}
+    itemSize={40}
+  />
+);
 
 export default App;
+
 ```
 
 ### 2️⃣ Using `useSmartData` Hook (New Feature!)
 ```jsx
-import { useSmartData } from "react-loop-components";
+import React, { useState } from "react";
+import { SmartLoop, useSmartData } from "react-loop-components";
 
-function DataComponent() {
-  const items = ["Dog", "Cat", "Rabbit"];
-  const processedData = useSmartData(items, "map");
+const users = [
+  { id: 1, name: "Alice" },
+  { id: 2, name: "Bob" },
+  { id: 3, name: "Charlie" },
+  { id: 4, name: "David" },
+  { id: 5, name: "Eve" },
+];
+
+const App = () => {
+  const [filter, setFilter] = useState(""); 
+  const { processedData, loading, error } = useSmartData(users, { filter });
 
   return (
-    <div>
-      {processedData.map((item, index) => (
-        <p key={index}>{item}</p>
-      ))}
-    </div>
-  );
-}
+    <>
+      <input
+        type="text"
+        placeholder="Filter by name..."
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+      />
 
-export default DataComponent;
+      {loading && <p>Loading... ⏳</p>}
+      {error && <p style={{ color: "red" }}>⚠️ Error: {error}</p>}
+      
+      <SmartLoop
+        data={processedData}
+        renderItem={(user) => <p key={user.id}>{user.name}</p>}
+        height={200}
+        itemSize={40}
+      />
+    </>
+  );
+};
+
+export default App;
+
 ```
 
 ### 3️⃣ Loop with `map`
@@ -58,7 +87,7 @@ import { LoopMap } from "react-loop-components";
 
 function App() {
   const items = ["Apple", "Banana", "Cherry"];
-  return <LoopMap array={items} component={(item) => <p>{item}</p>} />;
+  return <LoopMap data={items} renderItem={(item) => <p>{item}</p>} />;
 }
 
 export default App;
@@ -70,7 +99,7 @@ import { LoopForEach } from "react-loop-components";
 
 function App() {
   const items = ["Dog", "Cat", "Rabbit"];
-  return <LoopForEach array={items} component={(item) => <li>{item}</li>} />;
+  return <LoopForEach data={items} renderItem={(item) => <li>{item}</li>} />;
 }
 
 export default App;
@@ -82,7 +111,7 @@ import { LoopFor } from "react-loop-components";
 
 function App() {
   const items = ["One", "Two", "Three"];
-  return <LoopFor array={items} component={(item) => <h3>{item}</h3>} />;
+  return <LoopFor data={items} renderItem={(item) => <h3>{item}</h3>} />;
 }
 
 export default App;
@@ -94,7 +123,7 @@ import { LoopWhile } from "react-loop-components";
 
 function App() {
   const items = ["X", "Y", "Z"];
-  return <LoopWhile array={items} component={(item) => <span>{item} </span>} />;
+  return <LoopWhile data={items} renderItem={(item) => <span>{item} </span>} />;
 }
 
 export default App;
@@ -106,7 +135,7 @@ import { LoopReduce } from "react-loop-components";
 
 function App() {
   const items = ["Red", "Green", "Blue"];
-  return <LoopReduce array={items} component={(item) => <strong>{item}</strong>} />;
+  return <LoopReduce data={items} renderItem={(item) => <strong>{item}</strong>} />;
 }
 
 export default App;
@@ -115,13 +144,16 @@ export default App;
 ## Components
 | Component    | Loop Method |
 |-------------|------------|
-| SmartLoop   | Dynamic (map, forEach, for, while, reduce) |
+| SmartLoop   | A new Loop Component with more functions like (filtering sorting etc) |
 | LoopMap     | `array.map()` |
 | LoopForEach | `array.forEach()` |
 | LoopFor     | `for` loop |
 | LoopWhile   | `while` loop |
 | LoopReduce  | `array.reduce()` |
-
+## Hooks
+| Hook          | Hook Usage  |
+|---------------|-------------|
+| useSmartData()| Efficient data processing.|
 ## Features
 ✅ Supports multiple loop types  
 ✅ SmartLoop for dynamic loop selection  
@@ -131,19 +163,21 @@ export default App;
 ✅ Works with any React project  
 ✅ Built-in error handling  
 
+## Where we use the `useSmartData()` Hook and the `SmartLoop` component
+- Use useSmartData when filtering, fetching, or transforming data.
+- Use SmartLoop when rendering large lists efficiently.
+- Combine them for maximum performance & flexibility.
 ## Error Handling
 - Ensures `array` is an actual array, throws an error if not.
 - Ensures `component` is a valid function, throws an error if not.
 - Handles edge cases like empty arrays.
-- Error handling is centralized in `index.js` before passing data to components.
-
 Example with SmartLoop:
 ```jsx
 import { SmartLoop } from "react-loop-components";
 
 function App() {
   return (
-    <SmartLoop array={null} component={(item) => <p>{item}</p>} method="map" />
+    <SmartLoop data={null} renderItem={(item) => <p>{item}</p>} method="map" />
   ); // Throws an error
 }
 ```
@@ -153,7 +187,7 @@ Example with `LoopMap`:
 import { LoopMap } from "react-loop-components";
 
 function App() {
-  return <LoopMap array={null} component={(item) => <p>{item}</p>} />; // Throws an error
+  return <LoopMap data={null} renderItem={(item) => <p>{item}</p>} />; // Throws an error
 }
 ```
 
@@ -161,7 +195,7 @@ function App() {
 Feel free to contribute! Fork the repo, make changes, and submit a PR. 🚀
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](react-loop-components/LICENSE) file for details.
 
 MIT License © 2025 m.rabeeh.vk.
 
